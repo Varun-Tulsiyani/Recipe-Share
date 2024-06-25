@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Home | Recipe Share</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Recipe Share</h1>
+    <nav>
+        <ul id="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="categories.html">Categories</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="submitRecipe.html">Submit Recipe</a></li>
+            <li id="login-link"><a href="login.html">Login</a></li>
+            <li id="signup-link"><a href="signup.html">Sign Up</a></li>
+            <li id="logout-link" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            <li>
+                <div class="search-bar">
+                    <label for="searchInput"></label>
+                    <input id="searchInput" placeholder="Search for recipes..." type="text">
+                    <button onclick="searchRecipes()">Search</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section class="section" id="featured-recipes">
+        <h2>Featured Recipes</h2>
+        <p>Welcome to Recipe Share, your go-to platform for discovering and sharing recipes.</p>
+        <div id="featured-recipes-content"></div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 Recipe Share. All rights reserved.</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        checkSession();
+
+        const featuredRecipesContent = document.getElementById('featured-recipes-content');
+
+        fetch('/featured-recipes')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayFeaturedRecipes(data.recipes);
+                } else {
+                    console.error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching featured recipes:', error);
+            });
+
+        function displayFeaturedRecipes(recipes) {
+            featuredRecipesContent.innerHTML = '';
+            recipes.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                const title = document.createElement('h3');
+                title.textContent = recipe.title;
+                card.appendChild(title);
+
+                const description = document.createElement('p');
+                description.textContent = recipe.description;
+                card.appendChild(description);
+
+                featuredRecipesContent.appendChild(card);
+            });
+        }
+    });
+</script>
+
+<script src="scripts.js"></script>
+</body>
+</html>

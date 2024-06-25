@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Recipe Details | Recipe Share</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Recipe Share</h1>
+    <nav>
+        <ul id="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="categories.html">Categories</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="submitRecipe.html">Submit Recipe</a></li>
+            <li id="login-link"><a href="login.html">Login</a></li>
+            <li id="signup-link"><a href="signup.html">Sign Up</a></li>
+            <li id="logout-link" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            <li>
+                <div class="search-bar">
+                    <label for="searchInput"></label>
+                    <input id="searchInput" placeholder="Search for recipes..." type="text">
+                    <button onclick="searchRecipes()">Search</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2 id="recipe-title">Recipe Title</h2>
+    <p id="recipe-description">Description of the recipe and detailed cooking instructions.</p>
+    <p>Ingredients:</p>
+    <ul class="ingredients-list" id="ingredients-list"><!-- Ingredients will be dynamically loaded --></ul>
+    <p>Instructions:</p>
+    <ul class="instructions-list" id="instructions-list"><!-- Instructions will be dynamically loaded --></ul>
+    <p>Cooking Time: </p>
+    <p class="cooking-time" id="cooking-time"></p>
+    <p>Serving Size: </p>
+    <p class="serving-size" id="serving-size"></p>
+</main>
+
+<footer>
+    <p>&copy; 2024 Recipe Share. All rights reserved.</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        checkSession();
+
+        const recipeTitle = document.getElementById('recipe-title');
+        const recipeDescription = document.getElementById('recipe-description');
+        const ingredientsList = document.getElementById('ingredients-list');
+        const instructionsList = document.getElementById('instructions-list');
+        const cookingTime = document.getElementById('cooking-time');
+        const servingSize = document.getElementById('serving-size');
+
+        function getRecipeTitleFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('recipeTitle');
+        }
+
+        const recipeTitleFromUrl = getRecipeTitleFromUrl();
+
+        if (recipeTitleFromUrl) {
+            fetch(`/get-recipe?title=${encodeURIComponent(recipeTitleFromUrl)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayRecipeDetails(data.recipe);
+                    } else {
+                        console.error('Recipe not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching recipe details:', error);
+                });
+        }
+
+        function displayRecipeDetails(recipe) {
+            recipeTitle.textContent = recipe.title;
+            recipeDescription.textContent = recipe.description;
+            cookingTime.textContent = recipe.cooking_time + ' minutes';
+            servingSize.textContent = 'Serves ' + recipe.serving_size;
+
+            ingredientsList.innerHTML = '';
+            recipe.ingredients.split(',').forEach(ingredient => {
+                const li = document.createElement('li');
+                li.textContent = ingredient;
+                ingredientsList.appendChild(li);
+            });
+
+            instructionsList.innerHTML = '';
+            recipe.instructions.split('. ').forEach(instruction => {
+                const li = document.createElement('li');
+                li.textContent = instruction;
+                instructionsList.appendChild(li);
+            });
+        }
+    });
+</script>
+
+<script src="scripts.js"></script>
+</body>
+</html>

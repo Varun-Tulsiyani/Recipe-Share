@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Categories | Recipe Share</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Recipe Share</h1>
+    <nav>
+        <ul id="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="categories.html">Categories</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="submitRecipe.html">Submit Recipe</a></li>
+            <li id="login-link"><a href="login.html">Login</a></li>
+            <li id="signup-link"><a href="signup.html">Sign Up</a></li>
+            <li id="logout-link" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            <li>
+                <div class="search-bar">
+                    <label for="searchInput"></label>
+                    <input id="searchInput" placeholder="Search for recipes..." type="text">
+                    <button onclick="searchRecipes()">Search</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2>Recipe Categories</h2>
+    <ul>
+        <li><a class="category-link" href="recipe.html?category=breakfast" id="breakfast-link">Breakfast</a></li>
+        <li><a class="category-link" href="recipe.html?category=lunch" id="lunch-link">Lunch</a></li>
+        <li><a class="category-link" href="recipe.html?category=dinner" id="dinner-link">Dinner</a></li>
+        <li><a class="category-link" href="recipe.html?category=snacks" id="snacks-link">Snacks</a></li>
+        <li><a class="category-link" href="recipe.html?category=dessert" id="dessert-link">Dessert</a></li>
+    </ul>
+    <div id="recipe-content"></div>
+</main>
+
+<footer>
+    <footer>
+        <p>&copy; 2024 Recipe Share. All rights reserved.</p>
+    </footer>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        checkSession();
+
+        const categoryLinks = document.querySelectorAll('.category-link');
+        const recipeContent = document.getElementById('recipe-content');
+
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const category = this.getAttribute('href').split('=')[1];
+                loadRecipes(category);
+            });
+        });
+
+        function loadRecipes(category) {
+            setTimeout(() => {
+                const recipes = getRecipesByCategory(category);
+                displayRecipes(recipes);
+            }, 500);
+        }
+
+        function getRecipesByCategory(category) {
+            const allRecipes = {
+                breakfast: ['Pancakes', 'Omelette', 'Smoothie'],
+                lunch: ['Caesar Salad', 'Grilled Cheese Sandwich', 'Tomato Soup'],
+                dinner: ['Spaghetti Bolognese', 'Chicken Tikka Masala', 'Grilled Salmon'],
+                snacks: ['Fruit Salad', 'Yogurt Parfait', 'Trail Mix'],
+                dessert: ['Chocolate Cake', 'Ice Cream', 'Brownies']
+            };
+
+            return allRecipes[category] || [];
+        }
+
+        function displayRecipes(recipes) {
+            recipeContent.innerHTML = '<h3>Recipes</h3>';
+            const ul = document.createElement('ul');
+            recipes.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                const title = document.createElement('h3');
+                title.textContent = recipe;
+                card.appendChild(title);
+
+                const link = document.createElement('a');
+                link.href = `recipe.html?recipeTitle=${encodeURIComponent(title.textContent)}`;
+                link.appendChild(card);
+
+                recipeContent.appendChild(link);
+            });
+            recipeContent.appendChild(ul);
+        }
+    });
+</script>
+
+<script src="scripts.js"></script>
+</body>
+</html>

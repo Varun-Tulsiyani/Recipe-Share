@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Sign Up | Recipe Share</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Recipe Share</h1>
+    <nav>
+        <ul id="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="categories.html">Categories</a></li>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="submitRecipe.html">Submit Recipe</a></li>
+            <li id="login-link"><a href="login.html">Login</a></li>
+            <li id="signup-link"><a href="signup.html">Sign Up</a></li>
+            <li id="logout-link" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            <li>
+                <div class="search-bar">
+                    <label for="searchInput"></label>
+                    <input id="searchInput" placeholder="Search for recipes..." type="text">
+                    <button onclick="searchRecipes()">Search</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2>Sign Up / Register</h2>
+    <form class="signup-form" id="signup-form">
+        <fieldset>
+            <legend>Username</legend>
+            <label for="username">
+                <input id="username" name="username" placeholder="Username" required type="text">
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Email</legend>
+            <label for="email">
+                <input id="email" name="email" placeholder="Email" required type="email">
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Password</legend>
+            <label for="password">
+                <input id="password" name="password" placeholder="Password" required type="password">
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Confirm Password</legend>
+            <label for="confirm-password">
+                <input id="confirm-password" name="confirm-password" placeholder="Confirm Password" required
+                       type="password">
+            </label>
+        </fieldset>
+
+        <button type="submit">Sign Up</button>
+    </form>
+</main>
+
+<footer>
+    <p>&copy; 2024 Recipe Share. All rights reserved.</p>
+</footer>
+
+<script>
+    document.getElementById('signup-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match.');
+            return;
+        }
+
+        fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                email: email,
+                password: password
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registration successful!');
+                    window.location.href = 'home.html';
+                } else {
+                    alert('Registration failed: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+
+<script src="scripts.js"></script>
+</body>
+</html>
